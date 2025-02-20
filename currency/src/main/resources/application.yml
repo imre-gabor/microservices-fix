@@ -1,0 +1,5 @@
+currency:
+    exchangePremium: 0.01
+spring:
+    application:
+        name: currency

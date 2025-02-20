@@ -1,0 +1,43 @@
+server:
+  port: 8080
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8085/eureka/
+spring:
+  security:
+    csrf:
+      enabled: false
+  main:
+    - allow-bean-definition-overriding: true
+  cloud:
+    gateway:
+      routes:
+        - id: security
+          uri: lb://security
+          predicates:
+           - Path=/api/login
+        - id: currency
+          uri: lb://currency
+          predicates:
+            - Path=/currency/**
+          filters:
+            - RewritePath=/currency(?<segment>/?.*), /api$\{segment}
+            - AuthenticationFilter
+        - id: flights
+          uri: lb://flights
+          predicates:
+            - Path=/flights/**
+          filters:
+            - RewritePath=/flights(?<segment>/?.*), /api$\{segment}
+            - AuthenticationFilter
+        - id: bonus
+          uri: lb://bonus
+          predicates:
+            - Path=/bonus/**
+          filters:
+            - RewritePath=/bonus(?<segment>/?.*), /api$\{segment}
+            - AuthenticationFilter
+jwt:
+  secret: mySecret
+  issuer: MicroservicesApp
